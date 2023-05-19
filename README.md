@@ -1,4 +1,4 @@
-# csv_to_db
+# paramecium
 
 Install by running `pip install --editable .` from this directory.
 

@@ -1,0 +1,29 @@
+# pyproject.toml
+
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paramecium"
+version = "0.0.1"
+description = "Some tools"
+readme = "README.md"
+authors = [{ name = "Jeff Papachristou", email = "jpapa275@gmail.com" }]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+    "pandas",
+    "requests",
+    "sqlalchemy",
+    "colorama",
+    "tabulate"
+]
+requires-python = ">=3.9"
+
+[project.scripts]
+paramecium = "paramecium.__main__:cli"

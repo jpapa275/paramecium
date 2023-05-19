@@ -2,3 +2,6 @@
 csv_to_db/csv_to_db.egg-info/*
 csv_to_db/__pycache__/*
 .vscode/settings.json
+*.db
+*__pycache__*
+*.egg-info
