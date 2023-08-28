@@ -25,11 +25,10 @@ def make_dataframe(data_frame_list: list) -> pd.DataFrame:
         raise TypeError(f"Input is not a list.\nType: {type(data_frame_list)}")
 
 
-def output_csv(data_frame: pd.DataFrame,csv_name):
+def output_csv(data_frame: pd.DataFrame, csv_name):
     filepath = f"{pathlib.Path(__file__).resolve().parent}/{csv_name}"
     if filepath.exists() and is_data_frame(data_frame):
         data_frame.to_csv(filepath)
-
 
 
 def output_df(data_frame):
@@ -76,9 +75,13 @@ def banner():
 def print_red(statement):
     init(autoreset=True)
     print(Fore.RED + statement)
+
+
 def print_green(statement):
     init(autoreset=True)
     print(Fore.GREEN + statement)
+
+
 def print_yellow(statement):
     init(autoreset=True)
     print(Fore.YELLOW + statement)

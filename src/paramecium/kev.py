@@ -3,10 +3,19 @@ KEV Utilities
 """
 
 import pandas as pd
-from paramecium.utils import is_data_frame, output_csv,output_df,validate_cve,print_red,print_green,print_yellow
-# import from config.yml
-KEV_URL = "https://www.cisa.gov/sites/default/files/csv/known_exploited_vulnerabilities.csv"
+from paramecium.utils import (
+    is_data_frame,
+    output_df,
+    validate_cve,
+    print_red,
+    print_green,
+    print_yellow,
+)
 
+# import from config.yml
+KEV_URL = (
+    "https://www.cisa.gov/sites/default/files/csv/known_exploited_vulnerabilities.csv"
+)
 
 
 def get_cisa_kev() -> pd.DataFrame:
@@ -53,4 +62,6 @@ def search_kev_cve(args):
             else:
                 print_green("CVE not found in KEV")
     elif not validate_cve(args.cve_id):
-        print_yellow(f"Not a valid CVE id according to NIST's NVD. Please check the to make the spelling is correct.\nInput given: {args.cve_id} ")
+        print_yellow(
+            f"Not a valid CVE id according to NIST's NVD. Please check the to make the spelling is correct.\nInput given: {args.cve_id} "
+        )

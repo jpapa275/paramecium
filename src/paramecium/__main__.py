@@ -3,7 +3,7 @@ import pathlib
 import sys
 from paramecium import csv_to_db, ip_info, kev
 
-DEFAULT_DB_PATH = pathlib.Path.cwd().joinpath("csv_to_db_default.db")
+DEFAULT_DB_PATH = pathlib.Path.home().joinpath("csv_to_db_default.db")
 
 
 def cli():
@@ -50,12 +50,12 @@ def cli():
     ip_parser = subparsers.add_parser("ip_info", help="Simple IP Utilities")
     ip_subparsers = ip_parser.add_subparsers(title="commands")
 
-    egress_ip_parser = ip_subparsers.add_parser("egress_ip", help="Get the current egress IP")
+    egress_ip_parser = ip_subparsers.add_parser(
+        "egress_ip", help="Get the current egress IP"
+    )
     egress_ip_parser.set_defaults(func=ip_info.egress_ip)
 
-    geolocate_parser = ip_subparsers.add_parser(
-        "geolocate", help="Geolocate an IP"
-    )
+    geolocate_parser = ip_subparsers.add_parser("geolocate", help="Geolocate an IP")
     geolocate_parser.add_argument(
         "-i",
         "--ip_address",
@@ -67,11 +67,16 @@ def cli():
 
     kev_parser = subparsers.add_parser("kev", help="Cisa KEV Utilities")
     kev_subparsers = kev_parser.add_subparsers(title="commands")
-    kev_search_parser = kev_subparsers.add_parser("search_kev",help="Search KEV for a single CVE id. Case insensitive")
-    kev_search_parser.add_argument( "--cve_id",
+    kev_search_parser = kev_subparsers.add_parser(
+        "search_kev", help="Search KEV for a single CVE id. Case insensitive"
+    )
+    kev_search_parser.add_argument(
+        "--cve_id",
         type=str,
-        help="CVE ID to search for",)
+        help="CVE ID to search for",
+    )
     kev_search_parser.set_defaults(func=kev.search_kev_cve)
+
     args = global_parser.parse_args(args=None if sys.argv[1:] else ["--help"])
     args.func(args)
 
