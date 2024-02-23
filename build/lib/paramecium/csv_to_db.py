@@ -29,4 +29,4 @@ def csv_to_db(args):
                 Fore.GREEN,
                 f"[*] Successfully imported {df.iloc[0]['records_count']} records into table: {args.table_name}",
             )
-    print(Style.RESET_ALL,)
+    print(Style.RESET_ALL)
