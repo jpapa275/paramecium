@@ -85,3 +85,9 @@ def print_green(statement):
 def print_yellow(statement):
     init(autoreset=True)
     print(Fore.YELLOW + statement)
+
+
+def snake_case_pd_columns(df):
+    if not df.empty:
+        df.columns = df.columns.str.lower().str.replace(' ', '_')
+        return df
