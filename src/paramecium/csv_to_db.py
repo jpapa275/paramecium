@@ -1,14 +1,12 @@
 """ csv_to_db
 """
-from pathlib import Path
-import pandas as pd
 from sqlalchemy import create_engine, inspect, text
 from paramecium.utils import (
     banner,
-    snake_case_df_columns,
     print_green,
     print_red,
-    check_db_file_extension
+    check_db_file_extension,
+    import_csv
 )
 
 
@@ -94,4 +92,3 @@ def csv_to_db(args):
         inspect_table(args.db_file, args.table_name)
     except Exception as err:
         raise err
-    

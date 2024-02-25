@@ -2,7 +2,7 @@
     Utility functions
 """
 
-import pathlib
+from pathlib import Path
 import pandas as pd
 import requests
 from colorama import Fore, init
@@ -65,7 +65,7 @@ def output_csv(data_frame: pd.DataFrame, csv_name):
         data_frame (pd.DataFrame): Any df
         csv_name (_type_): Name of csv file
     """
-    filepath = f"{pathlib.Path(__file__).resolve().parent}/{csv_name}"
+    filepath = f"{Path(__file__).resolve().parent}/{csv_name}"
     if filepath.exists() and is_data_frame(data_frame):
         data_frame.to_csv(filepath)
 
@@ -104,14 +104,14 @@ def validate_cve(cve_id: str) -> bool:
             else:
                 return False
     except requests.exceptions as err:
-        print(err)
+        print_red(err)
 
 
 def banner():
     init(autoreset=True)
     print(
         Fore.MAGENTA
-        + r"""                 _            _ _     
+        + r"""                 _            _ _    
                 | |          | | |    
    ___ _____   _| |_ ___   __| | |__  
   / __/ __\ \ / / __/ _ \ / _` | '_ \ 
@@ -150,6 +150,7 @@ def snake_case_df_columns(df: pd.DataFrame):
     if not df.empty and is_data_frame(df):
         df.columns = df.columns.str.lower().str.replace(' ', '_')
         return df.columns
+    
     
     # Function to check and correct the database file extension
 def check_db_file_extension(db_file):
