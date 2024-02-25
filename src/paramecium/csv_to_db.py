@@ -1,46 +1,97 @@
-from sqlalchemy import create_engine, inspect
-import pandas as pd
-from colorama import Fore, Style
+""" csv_to_db
+"""
 from pathlib import Path
+import pandas as pd
+from sqlalchemy import create_engine, inspect, text
+from paramecium.utils import (
+    banner,
+    snake_case_df_columns,
+    print_green,
+    print_red,
+    check_db_file_extension
+)
 
 
-def csv_to_db(args):
-    #check if the db_file has .db at the end
-    if '.db' not in args.db_file:
-        # Create a Path object
-        p = Path(args.db_file)
 
-        # Get the file name without extension
-        file_name_without_ext = p.stem
 
-        # Append .db extension
-        args.db_file = str(Path(file_name_without_ext).with_suffix('.db'))
 
-    # import csv using pandas
-    csv_df = pd.read_csv(args.csv_file)
-    csv_df.columns = csv_df.columns.str.lower().str.replace(' ', '_')
-    print(Fore.GREEN, f"[+] Successfully imported the csv file: {args.csv_file}")
+# Function to inspect a table in the database
+def inspect_table(db_file, table_name):
+    """_summary_
 
-    # build sqlalchemy engine and handle db connection with 'with' statement
-    with create_engine(f"sqlite:///{args.db_file}").connect() as connection:
-        print(Fore.GREEN, f"[*] Successfully initialized the database: {args.db_file}")
-
-        # take csv dataframe and export to db
-        csv_df.to_sql(args.table_name, connection, if_exists=args.insert_option, index=False)
-
-        inspector = inspect(connection)
-        if inspector.get_columns(args.table_name):
-            df = pd.read_sql(
-                f"SELECT count(*) as records_count FROM {args.table_name} LIMIT 1", connection
-            )
-            if df.empty:
-                print(
-                    Fore.RED,
-                    f"[-] Don't know what you did but it didn't work as nothing was returned from table: {args.table_name}",
-                )
+    Args:
+        db_file (_type_): _description_
+        table_name (_type_): _description_
+    """
+    # Create a connection to the database
+    engine = create_engine(f"sqlite:///{db_file}")
+    with engine.connect() as connection:
+        try:
+            # Create an inspector and check if the table exists
+            inspector = inspect(connection)
+            if inspector.has_table(table_name):
+                # If the table exists, count the number of records
+                query = text(f"SELECT COUNT(*) as count FROM {table_name}")
+                result = connection.execute(query)
+                count = result.scalar()
+                # Print a success message
+                print_green(f"[*] Successfully imported {count} records into table: {table_name}")
             else:
-                print(
-                    Fore.GREEN,
-                    f"[*] Successfully imported {df.iloc[0]['records_count']} records into table: {args.table_name}",
-                )
-    print(Style.RESET_ALL,end='')
+                # If the table does not exist, print an error message
+                print_red(f"[-] The table: {table_name} does not exist")
+        except Exception as e:
+            # If an error occurs, print an error message
+            print_red(f"[-] An error occurred: {e}")
+
+# Function to connect to the database and export a DataFrame to a table
+def connect_to_db_and_export_to_table(db_file, table_name, csv_df, insert_option):
+    """_summary_
+
+    Args:
+        db_file (_type_): _description_
+        table_name (_type_): _description_
+        csv_df (_type_): _description_
+        insert_option (_type_): _description_
+    """
+    # Create a connection to the database
+    engine = create_engine(f"sqlite:///{db_file}")
+    with engine.connect() as connection:
+        try:
+            # Print a success message
+            print_green(f"[*] Successfully connected to the database: {db_file}")
+            # Export the DataFrame to the table
+            csv_df.to_sql(table_name, connection, if_exists=insert_option, index=False)
+        except  Exception as err:
+            # If an error occurs, print an error message
+            print_red(f"[-] An error occurred: {err}")
+
+# Main function to import a CSV file and export it to a database table
+def csv_to_db(args):
+    """_summary_
+
+    Args:
+        args (_type_): _description_
+
+    Raises:
+        err: _description_
+        err: _description_
+    """
+    try:
+        # Print the banner
+        banner()
+        # Check and correct the database file extension
+        args.db_file = check_db_file_extension(args.db_file)
+        # Import the CSV file as a df
+        csv_df = import_csv(args.csv_file)
+    except Exception as err:
+        raise err
+    try:
+        # Connect to the database and export the DataFrame to the table
+        connect_to_db_and_export_to_table(
+            args.db_file, args.table_name, csv_df, args.insert_option
+        )
+        # Inspect the table
+        inspect_table(args.db_file, args.table_name)
+    except Exception as err:
+        raise err
+    
